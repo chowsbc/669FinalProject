@@ -1,3 +1,4 @@
+//let's leave all of these imports in as we might need some of them later
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { TextInput, Text, View, FlatList, TouchableOpacity } from 'react-native';
@@ -20,10 +21,11 @@ if (firebase.apps.length === 0) {
 const db = firebase.firestore();
 const invCollRef = db.collection('pets');
 
+//Needed for conditional rendering of the buttons or pets in the pet list
 let presentlist= '';
 let firstItem = '';
-let kek = 0;
 
+//Adds pet to firebase using props from naming screeen
 async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){ 
     let itemRef = db.collection('pets').doc(String(key));
     itemRef.set ({
@@ -36,6 +38,7 @@ async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){
     });
   }
 
+  //Load function
   async function getPets() {
     appPets = [];
     let qSnap = await invCollRef.get();
@@ -48,6 +51,8 @@ async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){
 
 class HomeScreen extends React.Component {
 
+    //firebase will only have up to 3 items, that corrospond to keys 1, 2, or 3.
+
     constructor(props) {
         super(props);
         this.nextKey = 0;
@@ -57,11 +62,13 @@ class HomeScreen extends React.Component {
         }
       }
 
+      //Trigger load function, update dataframe
       async updateDataframe() {
         await getPets()
         this.setState({theList:appPets});
       }
 
+      //creates a list of keys that corrospond to existing firebase items. List will have a zero at the end. This is needed for conditional rendering
       createlist() {
         presentlist = []
         for (item of this.state.theList) {
@@ -70,6 +77,7 @@ class HomeScreen extends React.Component {
         presentlist.push(0)
         return presentlist 
       }
+      
 
       async componentDidMount() {
         this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
@@ -80,25 +88,31 @@ class HomeScreen extends React.Component {
         componentWillUnmount() {
         this.focusUnsubscribe();
       }
+
       onFocus = () => {
         this.updateDataframe()
       }
 
+//redner function gets a list keys of present firebase items (1, 2, or 3). Then, three petlist_items (petlist_item 1, 2, and 3) are conditionally rendered
+//either as buttons or as the name of the pet and the picture. TODO: picture is currently rednered as <<species>>.jpg. Have this render as an actual jpg and
+//place a picture of the species in assets.
+
+//Buttons are conditionally rendered when a pet item is absent. Pressing a button, pass a "place" to the PetMaker class.
+//<<Petname>> and <<species>>.jpg rednered when a pet item is rednered when there is a corrosponding pet item in firebase
 render() {
     presentlist = []
     presentlist = this.createlist()
-    console.log('kek')
-    let introtext; 
+    let petlist_item1; 
     if (presentlist.includes(1)) {
       firstItem = this.state.theList.find((element) => {return element.key === 1 })
-    introtext=
+    petlist_item1=
     <View>
     <Text>{firstItem.name}</Text>
     <Text>{firstItem.pic}</Text>
     </View>
     }
     else {
-      introtext = 
+      petlist_item1 = 
       <TouchableOpacity 
         style={styles.footerButton}
         onPress={()=>{this.props.navigation.navigate("Maker", {
@@ -108,7 +122,7 @@ render() {
       </TouchableOpacity>
      
 }
-let introtext2;
+let petlist_item2;
 presentlist = []
 presentlist = this.createlist()
 for (item of this.state.theList) {
@@ -116,14 +130,14 @@ for (item of this.state.theList) {
 }
 if (presentlist.includes(2)) {
   firstItem = this.state.theList.find((element) => {return element.key === 2 })
-introtext2=
+petlist_item2=
 <View>
 <Text>{firstItem.name}</Text>
 <Text>{firstItem.pic}</Text>
 </View>
 }
 else {
-  introtext2 = 
+  petlist_item2 = 
   <TouchableOpacity 
     style={styles.footerButton}
     onPress={()=>{this.props.navigation.navigate("Maker", {
@@ -132,7 +146,7 @@ else {
     <Text>Pet 2</Text>
   </TouchableOpacity>
 }
-let introtext3;
+let petlist_item3;
 presentlist = []    
 presentlist = this.createlist()
 for (item of this.state.theList) {
@@ -140,14 +154,14 @@ for (item of this.state.theList) {
 }
 if (presentlist.includes(3)) {
   firstItem = this.state.theList.find((element) => {return element.key === 3 })
-introtext3=
+petlist_item3=
 <View>
 <Text>{firstItem.name}</Text>
 <Text>{firstItem.pic}</Text>
 </View>
 }
 else {
-  introtext3 = 
+  petlist_item3 = 
   <TouchableOpacity 
     style={styles.footerButton}
     onPress={()=>{this.props.navigation.navigate("Maker", {
@@ -159,9 +173,9 @@ else {
 
     return (       
         <View style={styles.footerButtonContainer}>
-            {introtext}
-            {introtext2}
-            {introtext3}
+            {petlist_item1}
+            {petlist_item2}
+            {petlist_item3}
           </View>
      );
 }
@@ -173,22 +187,9 @@ class PetMaker extends React.Component {
         super(props);
         appPets = [];
         this.operation = this.props.route.params.operation;
-        this.nextKey = 0;
         this.place = ''
         this.animal = ''
         this.picture = ''
-        this.dog = false
-        this.cat = false
-        this.bird = false
-        this.state = {
-          theList: appPets,
-          inputText: '',
-          pressed: false,
-          dog: false,
-          cat: false,
-          bird: false
-    
-        }
       }
 
       async updateDataframe() {
@@ -203,52 +204,123 @@ class PetMaker extends React.Component {
         this.pressed = false
         }
 
+      //recieves "place" from Homescreen
       onFocus = () => {
         this.place = this.props.route.params.Place
       }
 
+  //buttons pass the Animal(species), the Picture, the pet's place in the list, to the PetNamer class.
+
 render() {
     return (
     <View>
-       <View style={styles.textInputContainer}>
-            <TextInput
-              placeholder='Enter item text'
-              style={styles.textInputBox}
-              onChangeText={(text) => this.setState({inputText: text})}
-              value={this.state.inputText}
-            />
-          </View>
+
+        <View style ={styles.header}>
+          <Text style ={styles.headertext}>
+            Select a pet
+          </Text>
+        </View>
         <View style={styles.footerButtonContainer}>
-            <TouchableOpacity 
+        <Text>Dog</Text>
+        <TouchableOpacity
               style={styles.footerButton}
-              style={[(this.state.dog) ? styles.footerButton2:styles.footerButton]}
-              onPress={()=>{this.setState({dog:true}), this.setState({cat:false}), this.setState({bird:false}), this.picture = 'dog.pic', this.animal = 'dog', this.setState({pressed:true}), this.setState({dog:true})}}>             
-              <Text>Dog</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.footerButton}
-              style={[(this.state.cat === true) ? styles.footerButton2:styles.footerButton]}
-              onPress={()=>{this.setState({dog:false}), this.setState({cat:true}), this.setState({bird:false}), this.picture = 'cat.pic', this.animal = 'cat', this.setState({pressed:true}, this.setState({cat:true}))}}>
-              <Text>Cat</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.footerButton}
-              style={[(this.state.bird) ? styles.footerButton2:styles.footerButton]}
-              onPress={()=>{this.setState({dog:false}), this.setState({cat:false}), this.setState({bird:true}), this.picture = 'bird.pic', this.animal = 'bird', this.setState({pressed:true}, this.setState({bird:true}))}}>       
-              <Text>Bird</Text>
-            </TouchableOpacity>
+              onPress={()=>{this.props.navigation.navigate("Namer",
+              {Place:this.place,
+              Animal:"Dog",
+              Picture: "dog.jpg",
+              }
+              )}}>
+              <Text>Select</Text>
+            </TouchableOpacity> 
+            <Text>Cat</Text>
             <TouchableOpacity
               style={styles.footerButton}
-              disabled = {!((this.state.pressed) && (this.state.inputText))}
-              style={[((this.state.pressed) && (this.state.inputText)) ? styles.footerButton:styles.footerButton2]}
-              onPress={()=>{this.props.navigation.navigate("Home",
-              addNewToFireBase(this.animal, this.picture, this.state.inputText, this.place)
+              onPress={()=>{this.props.navigation.navigate("Namer",
+              {Place:this.place,
+              Animal:"Cat",
+              Picture: "cat.jpg",
+              }
               )}}>
-              <Text>Create Pet!</Text>
+              <Text>Select</Text>
+            </TouchableOpacity>
+            <Text>Bird</Text>
+            <TouchableOpacity
+              style={styles.footerButton}
+              onPress={()=>{this.props.navigation.navigate("Namer",
+              {Place:this.place,
+              Animal:"Bird",
+              Picture: "bird.jpg",
+              }
+              )}}>
+              <Text>Select</Text>
             </TouchableOpacity>                       
           </View>
         </View>
      );
+}
+}
+
+class PetNamer extends React.Component {
+
+  constructor(props) {
+      super(props);
+      appPets = [];
+      this.state = {
+        inputText: '',
+ 
+      }
+    }
+
+    async updateDataframe() {
+      await getPets()
+      this.setState({theList:appPets});
+      theList = this.state.theList
+
+      }
+
+    async componentDidMount() {
+      this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
+      }
+    
+    //recieves place, animal, and picture from PetMaker
+    onFocus = () => {
+      this.place = this.props.route.params.Place
+      this.animal = this.props.route.params.Animal
+      this.picture = this.props.route.params.Picture
+    }
+
+//render function renders a textbox. Button press creates a pet item in firebase with using inputtext from the text box as well as picture, place, and animal
+//from the PetMaker class.
+render() {
+  return (
+  <View>
+      <View style ={styles.header}>
+        <Text style ={styles.headertext}>
+          What is your pet's name?
+        </Text>
+      </View>
+      <View style={styles.textInputContainer}>
+          <TextInput
+            placeholder='Enter item text'
+            style={styles.textInputBox}
+            onChangeText={(text) => this.setState({inputText: text})}
+            value={this.state.inputText}
+          />
+   
+      </View>
+      <View style={styles.footerButtonContainer}>
+      <TouchableOpacity
+        style={styles.footerButton}
+        disabled = {!(this.state.inputText)}
+        style={[(this.state.inputText) ? styles.footerButton:styles.footerButton2]}
+        onPress={()=>{this.props.navigation.navigate("Home",
+        addNewToFireBase(this.animal, this.picture, this.state.inputText, this.place)
+        )}}>
+        <Text>Create Pet!</Text>
+      </TouchableOpacity>
+      </View>
+      </View>
+   );
 }
 }
 
@@ -263,6 +335,7 @@ function App() {
         >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Maker" component={PetMaker} />
+          <Stack.Screen name="Namer" component={PetNamer} />
         </Stack.Navigator>
       </NavigationContainer>
     );

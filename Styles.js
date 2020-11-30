@@ -18,6 +18,15 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  header: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+
+  headertext: {
+    fontSize: 50,
+  },
+
   body: {
     flex: 0.4,
     alignItems: 'stretch',
