@@ -58,7 +58,7 @@ class HomeScreen extends React.Component {
         this.nextKey = 0;
         this.state = {
           theList: '',
-          presentlist
+          list_wascreated: false,
         }
       }
 
@@ -66,6 +66,7 @@ class HomeScreen extends React.Component {
       async updateDataframe() {
         await getPets()
         this.setState({theList:appPets});
+        this.setState({list_wascreated:true});
       }
 
       //creates a list of keys that corrospond to existing firebase items. List will have a zero at the end. This is needed for conditional rendering
@@ -100,84 +101,102 @@ class HomeScreen extends React.Component {
 //Buttons are conditionally rendered when a pet item is absent. Pressing a button, pass a "place" to the PetMaker class.
 //<<Petname>> and <<species>>.jpg rednered when a pet item is rednered when there is a corrosponding pet item in firebase
 render() {
-    presentlist = []
-    presentlist = this.createlist()
-    let petlist_item1; 
-    if (presentlist.includes(1)) {
-      firstItem = this.state.theList.find((element) => {return element.key === 1 })
-    petlist_item1=
-    <View>
-    <Text>{firstItem.name}</Text>
-    <Text>{firstItem.pic}</Text>
-    </View>
-    }
-    else {
-      petlist_item1 = 
-      <TouchableOpacity 
-        style={styles.footerButton}
-        onPress={()=>{this.props.navigation.navigate("Maker", {
-          Place: 1,
-          })}}>
-        <Text>Pet 1</Text>
-      </TouchableOpacity>
-     
+  presentlist = []
+  presentlist = this.createlist()
+  console.log(presentlist)
+  let introtext; 
+  if (this.state.list_wascreated === true) {
+  if (presentlist.includes(1)) {
+    firstItem = this.state.theList.find((element) => {return element.key === 1 })
+  introtext=
+  <View>
+  <Text>{firstItem.name}</Text>
+  <Text>{firstItem.pic}</Text>
+  </View>
+  }
+  else {
+    introtext = 
+    <TouchableOpacity 
+      style={styles.footerButton}
+      onPress={()=>{this.props.navigation.navigate("Maker", {
+        Place: 1,
+        })}}>
+      <Text>Pet 1</Text>
+    </TouchableOpacity>
 }
-let petlist_item2;
+  }
+  else {
+
+  }
+let introtext2;
 presentlist = []
 presentlist = this.createlist()
 for (item of this.state.theList) {
-    presentlist.push(item.key)
+  presentlist.push(item.key)
 }
+if (this.state.list_wascreated === true) {
 if (presentlist.includes(2)) {
-  firstItem = this.state.theList.find((element) => {return element.key === 2 })
-petlist_item2=
+firstItem = this.state.theList.find((element) => {return element.key === 2 })
+introtext2=
 <View>
 <Text>{firstItem.name}</Text>
 <Text>{firstItem.pic}</Text>
 </View>
 }
 else {
-  petlist_item2 = 
-  <TouchableOpacity 
-    style={styles.footerButton}
-    onPress={()=>{this.props.navigation.navigate("Maker", {
-      Place: 2,
-      })}}>
-    <Text>Pet 2</Text>
-  </TouchableOpacity>
+introtext2 = 
+<TouchableOpacity 
+  style={styles.footerButton}
+  onPress={()=>{this.props.navigation.navigate("Maker", {
+    Place: 2,
+    })}}>
+  <Text>Pet 2</Text>
+</TouchableOpacity>
 }
-let petlist_item3;
+}
+
+else{
+
+}
+let introtext3;
 presentlist = []    
 presentlist = this.createlist()
 for (item of this.state.theList) {
-    presentlist.push(item.key)
+  presentlist.push(item.key)
 }
+if (this.state.list_wascreated === true){
 if (presentlist.includes(3)) {
-  firstItem = this.state.theList.find((element) => {return element.key === 3 })
-petlist_item3=
+firstItem = this.state.theList.find((element) => {return element.key === 3 })
+introtext3=
 <View>
 <Text>{firstItem.name}</Text>
 <Text>{firstItem.pic}</Text>
 </View>
 }
+
 else {
-  petlist_item3 = 
-  <TouchableOpacity 
-    style={styles.footerButton}
-    onPress={()=>{this.props.navigation.navigate("Maker", {
-      Place: 3,
-      })}}>
-    <Text>Pet 3</Text>
-  </TouchableOpacity> 
+introtext3 = 
+<TouchableOpacity 
+  style={styles.footerButton}
+  onPress={()=>{this.props.navigation.navigate("Maker", {
+    Place: 3,
+    })}}>
+  <Text>Pet 3</Text>
+</TouchableOpacity> 
+}
 }
 
-    return (       
-        <View style={styles.footerButtonContainer}>
-            {petlist_item1}
-            {petlist_item2}
-            {petlist_item3}
-          </View>
-     );
+else {
+
+}
+
+  return (       
+      <View style={styles.footerButtonContainer}>
+          {introtext}
+          {introtext2}
+          {introtext3}
+        </View>
+   );
 }
 }
 
