@@ -1,7 +1,7 @@
 //let's leave all of these imports in as we might need some of them later
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { TextInput, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { TextInput, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -242,36 +242,36 @@ render() {
         <View style={styles.footerButtonContainer}>
         <Text>Dog</Text>
         <TouchableOpacity
-              style={styles.footerButton}
+              
               onPress={()=>{this.props.navigation.navigate("Namer",
               {Place:this.place,
               Animal:"Dog",
               Picture: "dog.jpg",
               }
               )}}>
-              <Text>Select</Text>
+              <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
             </TouchableOpacity> 
             <Text>Cat</Text>
             <TouchableOpacity
-              style={styles.footerButton}
+              
               onPress={()=>{this.props.navigation.navigate("Namer",
               {Place:this.place,
               Animal:"Cat",
               Picture: "cat.jpg",
               }
               )}}>
-              <Text>Select</Text>
+              <Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
             </TouchableOpacity>
             <Text>Bird</Text>
             <TouchableOpacity
-              style={styles.footerButton}
+              
               onPress={()=>{this.props.navigation.navigate("Namer",
               {Place:this.place,
               Animal:"Bird",
               Picture: "bird.jpg",
               }
               )}}>
-              <Text>Select</Text>
+              <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
             </TouchableOpacity>                       
           </View>
         </View>

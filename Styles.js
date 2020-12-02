@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     padding: 40,
     marginHorizontal: '5%',
     backgroundColor: colors.primaryDark,
-
+    
     },
   
   textStyle: {
@@ -79,4 +79,24 @@ export const styles = StyleSheet.create({
       fontSize: 24,
       padding: 5,
     },
+
+  
+   /* petImageContainer:{
+      flex: .3,
+      paddingLeft: 45,
+      paddingRight:45,
+      backgroundColor: 'lightgray',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },*/
+    petImageStyle1: {
+      
+      height: 200,
+      width: 200,
+      padding: 0,
+      margin: 0,
+      resizeMode: 'contain',
+      
+    },
+
 });
