@@ -1,10 +1,13 @@
 //let's leave all of these imports in as we might need some of them later
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { TextInput, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { styles, colors } from './Styles';
 import firebase from 'firebase';
 import '@firebase/firestore';
@@ -343,21 +346,93 @@ render() {
 }
 }
 
-function App() {
+class ProfileScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return (
-      <NavigationContainer>
-        <Stack.Navigator 
-          initialRouteName="Home"   
-          screenOptions={{
-            headerShown: false
-          }}
-        >
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Maker" component={PetMaker} />
-          <Stack.Screen name="Namer" component={PetNamer} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>
+          This is a profile page!
+        </Text>
+      </View>
     );
   }
+}
+
+// App constructor and nav bar
+const Tab = createMaterialBottomTabNavigator();
+
+function Home() {
+  return (
+    <Stack.Navigator
+      initialRouteName="Home"
+    >
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Maker" component={PetMaker} />
+      <Stack.Screen name="Namer" component={PetNamer} />
+    </Stack.Navigator>
+  );
+}
+
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName='Home'
+      activeColor='#e91e63'
+      labelStyle={{ fontSize: 12 }}
+      style={{ backgroundColor: 'tomato' }}
+    >
+      <Tab.Screen
+        name='Home'
+        component={Home}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name='home' color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Profile'
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name='account' color={color} size={26} />
+          ),
+        }}
+      />      
+    </Tab.Navigator>
+  );
+}
+
+// function App() {
+//     return (
+//       <NavigationContainer>
+//         <Stack.Navigator 
+//           initialRouteName="Home"   
+//           screenOptions={{
+//             headerShown: false
+//           }}
+//         >
+//           <Stack.Screen name="Home" component={HomeScreen} />
+//           <Stack.Screen name="Maker" component={PetMaker} />
+//           <Stack.Screen name="Namer" component={PetNamer} />
+//         </Stack.Navigator>
+//       </NavigationContainer>
+//     );
+//   }
+
+function App() {
+  return (
+    <NavigationContainer>
+      <MyTabs />
+    </NavigationContainer>
+  );
+}
   
-  export default App;
+export default App;
