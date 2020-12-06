@@ -106,7 +106,6 @@ class HomeScreen extends React.Component {
 render() {
   presentlist = []
   presentlist = this.createlist()
-  console.log(presentlist)
   let introtext; 
   if (this.state.list_wascreated === true) {
   if (presentlist.includes(1)) {
@@ -114,7 +113,6 @@ render() {
   introtext=
   <View>
   <Text>{firstItem.name}</Text>
-  <Text>{firstItem.pic}</Text>
   </View>
   }
   else {
@@ -131,6 +129,37 @@ render() {
   else {
 
   }
+let petlistimage1;
+if (firstItem.species === 'Dog' && presentlist.includes(1)){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
+  }
+
+if (firstItem.species === 'Cat'&& presentlist.includes(1)){
+petlistimage1 = 
+<Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+}
+
+if (firstItem.species === 'Bird' && presentlist.includes(1)){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
+  }
+
+let petbutton1;
+if (presentlist.includes(1)) {
+  petbutton1 =
+  <TouchableOpacity 
+      style={styles.interactbutton}
+      onPress={()=>{this.props.navigation.navigate("Interact", {
+        Place: 1,
+        })}}>
+      <Text>Interact</Text>
+    </TouchableOpacity>
+}
+
+
+
+
 let introtext2;
 presentlist = []
 presentlist = this.createlist()
@@ -143,8 +172,8 @@ firstItem = this.state.theList.find((element) => {return element.key === 2 })
 introtext2=
 <View>
 <Text>{firstItem.name}</Text>
-<Text>{firstItem.pic}</Text>
 </View>
+
 }
 else {
 introtext2 = 
@@ -161,6 +190,36 @@ introtext2 =
 else{
 
 }
+
+let petlistimage2;
+if (firstItem.species === 'Dog' && presentlist.includes(2)){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
+  }
+
+if (firstItem.species === 'Cat'&& presentlist.includes(2)){
+petlistimage2 = 
+<Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+}
+
+if (firstItem.species === 'Bird' && presentlist.includes(2)){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
+  }
+
+let petbutton2;
+if (presentlist.includes(2)) {
+  petbutton2 =
+  <TouchableOpacity 
+      style={styles.interactbutton}
+      onPress={()=>{this.props.navigation.navigate("Interact", {
+        Place: 2,
+        })}}>
+      <Text>Interact</Text>
+    </TouchableOpacity>
+}
+
+
 let introtext3;
 presentlist = []    
 presentlist = this.createlist()
@@ -173,7 +232,6 @@ firstItem = this.state.theList.find((element) => {return element.key === 3 })
 introtext3=
 <View>
 <Text>{firstItem.name}</Text>
-<Text>{firstItem.pic}</Text>
 </View>
 }
 
@@ -193,11 +251,57 @@ else {
 
 }
 
-  return (       
+let petlistimage3;
+if (firstItem.species === 'Dog' && presentlist.includes(3)){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
+  }
+
+if (firstItem.species === 'Cat'&& presentlist.includes(3)){
+petlistimage3 = 
+<Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+}
+
+if (firstItem.species === 'Bird' && presentlist.includes(3)){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
+  }
+
+let petbutton3;
+if (presentlist.includes(3)) {
+  petbutton3 =
+  <TouchableOpacity 
+      style={styles.interactbutton}
+      onPress={()=>{this.props.navigation.navigate("Interact", {
+        Place: 3,
+        })}}>
+      <Text>Interact</Text>
+    </TouchableOpacity>
+}
+
+  return (
       <View style={styles.footerButtonContainer}>
-          {introtext}
-          {introtext2}
+          <View style={styles.petobject}>
+            {introtext}
+            <View style={styles.petImageStyle1}>
+              {petlistimage1}
+            </View>
+            {petbutton1}
+          </View>
+          <View style={styles.petobject}>
+            {introtext2}
+            <View style={styles.petImageStyle1}>
+              {petlistimage2}
+            </View>
+            {petbutton2}
+          </View>
+          <View style={styles.petobject}>
           {introtext3}
+            <View style={styles.petImageStyle1}>
+              {petlistimage3}
+            </View>
+            {petbutton3}
+          </View>
         </View>
    );
 }
@@ -363,6 +467,103 @@ class ProfileScreen extends React.Component {
   }
 }
 
+class PetInteraction extends React.Component {
+
+  constructor(props) {
+    super(props);
+    appPets = [];
+    this.state = {
+      theList: '',
+      currentpet: '',
+
+    }
+  }
+
+  async componentDidMount() {
+    this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
+    this.updateDataframe()
+    //this.createlist()
+    }
+
+    componentWillUnmount() {
+    this.focusUnsubscribe();
+  }
+
+   async updateDataframe() {
+     await getPets()
+     this.setState({theList:appPets});
+     this.setState({list_wascreated:true});
+     this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
+   }
+
+  onFocus = () => {
+    this.updateDataframe()
+    
+  }
+
+  render() {
+    let petintpic;
+    if (this.state.currentpet.species === 'Dog'){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixeldog3.png')}/>  
+      }
+    
+    if (this.state.currentpet.species === 'Cat'){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelcat3.png')}/>  
+      }
+    
+    if (this.state.currentpet.species === 'Bird'){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelbird3.png')}/>  
+      }
+
+    {console.log(this.state.currentpet)}
+    return (
+      <View style={styles.footerButtonContainer}>
+        <Text style ={styles.headertext}>
+            {this.state.currentpet.name}
+        </Text>
+        <View>
+          {petintpic}
+        </View>
+        <Text style = {styles.bodytext}>
+          Stamina: {this.state.currentpet.Stamina}
+        </Text>
+        <Text style = {styles.bodytext}>
+          Happiness: {this.state.currentpet.Happiness}
+        </Text>
+    
+      <TouchableOpacity
+        style={styles.petintbutton}
+       
+        onPress={()=>{}}>
+        <Text>Feed</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.petintbutton}
+       
+        onPress={()=>{}}>
+        <Text>Play</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.petintbutton}
+       
+        onPress={()=>{}}>
+        <Text>Decorate</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.petintbutton}
+       
+        onPress={()=>{}}>
+        <Text>Release</Text>
+      </TouchableOpacity>
+      </View>
+      
+    );
+  }
+}
+
 // App constructor and nav bar
 const Tab = createMaterialBottomTabNavigator();
 
@@ -374,6 +575,7 @@ function Home() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Maker" component={PetMaker} />
       <Stack.Screen name="Namer" component={PetNamer} />
+      <Stack.Screen name="Interact" component={PetInteraction} />
     </Stack.Navigator>
   );
 }
@@ -409,23 +611,6 @@ function MyTabs() {
     </Tab.Navigator>
   );
 }
-
-// function App() {
-//     return (
-//       <NavigationContainer>
-//         <Stack.Navigator 
-//           initialRouteName="Home"   
-//           screenOptions={{
-//             headerShown: false
-//           }}
-//         >
-//           <Stack.Screen name="Home" component={HomeScreen} />
-//           <Stack.Screen name="Maker" component={PetMaker} />
-//           <Stack.Screen name="Namer" component={PetNamer} />
-//         </Stack.Navigator>
-//       </NavigationContainer>
-//     );
-//   }
 
 function App() {
   return (

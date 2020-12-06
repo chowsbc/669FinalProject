@@ -13,9 +13,10 @@ export const styles = StyleSheet.create({
   
   footerButtonContainer: {
     flexDirection: 'column',
-    justifyContent: 'space-around',
+
     height: '80%',
     alignItems: "center",
+    marginTop: 25,
   },
 
   header: {
@@ -25,6 +26,10 @@ export const styles = StyleSheet.create({
 
   headertext: {
     fontSize: 50,
+  },
+
+  bodytext: {
+    fontSize: 20,
   },
 
   body: {
@@ -46,6 +51,31 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primaryDark,
     
     },
+
+    petintbutton: {
+      borderRadius: 12,
+      borderColor: colors.outline,
+      borderWidth: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 150,
+      height: 50,
+      marginHorizontal: '5%',
+      backgroundColor: colors.primaryDark,
+      
+      },
+
+    interactbutton: {
+      borderRadius: 12,
+      borderColor: colors.outline,
+      borderWidth: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 5,
+      marginHorizontal: '5%',
+      backgroundColor: colors.primaryDark,
+      
+      },
   
   textStyle: {
     color: 'black',
@@ -80,19 +110,20 @@ export const styles = StyleSheet.create({
       padding: 5,
     },
 
-  
-   /* petImageContainer:{
-      flex: .3,
-      paddingLeft: 45,
-      paddingRight:45,
-      backgroundColor: 'lightgray',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },*/
     petImageStyle1: {
       
-      height: 200,
-      width: 200,
+      height: 150,
+      width: 150,
+      padding: 0,
+      margin: 0,
+      resizeMode: 'contain',
+      
+    },
+
+    petImageStyle2: {
+      
+      height: 250,
+      width: 250,
       padding: 0,
       margin: 0,
       resizeMode: 'contain',
