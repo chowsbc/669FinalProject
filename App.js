@@ -30,7 +30,7 @@ let firstItem = '';
 let appPets = [];
 
 //Adds pet to firebase using props from naming screeen
-async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){ // MAGGIE: I think we should comment out the the required variable stamina and hapiness. It's defined in the function
+async function addNewToFireBase(species, pic, name, key){ //uncessessary required variables removed
     let itemRef = db.collection('pets').doc(String(key));
     itemRef.set ({
         species:species,
@@ -41,6 +41,21 @@ async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){ //
         Happiness: 100,
         canFeed: true,  // MAGGIE
         canPlay: true,
+    });
+  }
+
+  async function UpdateToFireBase(species, pic, name, key, Stamina, Happiness, canFeed, canPlay){ //STEPHEN---update function has more required variables so that it can replace old pet documents without adding in pre-set values
+    console.log(Happiness)
+    let itemRef = db.collection('pets').doc(String(key));
+    itemRef.set ({
+        species:species,
+        pic:pic,
+        name:name,
+        key:key,
+        Stamina:Stamina,
+        Happiness:Happiness,
+        canFeed: canFeed,
+        canPlay: canPlay,
     });
   }
 
@@ -511,7 +526,6 @@ class PetInteraction extends React.Component {
   async componentDidMount() {
     this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
     this.updateDataframe()
-    //this.createlist()
     }
 
     componentWillUnmount() {
@@ -530,17 +544,15 @@ class PetInteraction extends React.Component {
     
   }
 
-  updatePet = async(id, pet) => {  // MAGGIE
-    let petRef = this.invCollRef.doc(String(id)); // get ref for this specific pet
-    await petRef.update(pet);
-  }
+  //species, pic, name, key, Stamina, Happiness, canFeed, canPlay
 
-  feedPet = async(id, pet) => { // MAGGIE: the idea here is, users can only feed or play with a pet once for every 10 mins. Can be easily adjusted later.
+
+  feedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
     if (pet.canFeed == true) {
       pet.Stamina += 20;
       pet.canFeed = false;
       refreshFeed(pet);
-      this.updatePet(id, pet);
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
       this.updateDataframe();
       return pet; 
     }
@@ -550,11 +562,12 @@ class PetInteraction extends React.Component {
   }
 
   playPet = async(id, pet) => {
+  
     if (pet.canPlay == true) {
       pet.Happiness += 20;
       pet.canPlay = false;
       refreshPlay(pet);
-      this.updatePet(id, pet);
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: See above
       this.updateDataframe();
       return pet;
     }
@@ -582,7 +595,6 @@ class PetInteraction extends React.Component {
       <Image style={styles.petImageStyle2} source={require('./images/pixelbird3.png')}/>  
       }
 
-    {console.log(this.state.currentpet)}
     return (
       <View style={styles.footerButtonContainer}>
         <Text style ={styles.headertext}>
@@ -602,6 +614,7 @@ class PetInteraction extends React.Component {
         style={styles.petintbutton}
        
         onPress={()=>{  // MAGGIE
+   
           this.feedPet(this.state.currentpet.key, this.state.currentpet)
         }}>
         <Text>Feed</Text>
