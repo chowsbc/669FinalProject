@@ -27,9 +27,10 @@ const invCollRef = db.collection('pets');
 //Needed for conditional rendering of the buttons or pets in the pet list
 let presentlist= '';
 let firstItem = '';
+let appPets = [];
 
 //Adds pet to firebase using props from naming screeen
-async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){ 
+async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){ // MAGGIE: I think we should comment out the the required variable stamina and hapiness. It's defined in the function
     let itemRef = db.collection('pets').doc(String(key));
     itemRef.set ({
         species:species,
@@ -38,11 +39,13 @@ async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){
         key:key,
         Stamina: 100,
         Happiness: 100,
+        canFeed: true,  // MAGGIE
+        canPlay: true,
     });
   }
 
   //Load function
-  async function getPets() {
+  async function getPets() { // MAGGIE
     appPets = [];
     let qSnap = await invCollRef.get();
     qSnap.forEach(qDocSnap => {
@@ -51,6 +54,33 @@ async function addNewToFireBase(species, pic, name, key, Stamina, Happiness){
     })
   }
 
+  function activateFeed(pet) { // MAGGIE: not sure if this works, needs testing
+    pet.canFeed = true;
+    return pet;
+  }
+
+  async function refreshFeed(pet) {
+    if (pet.canFeed == true) {
+      return;
+    }
+    else {
+      setTimeout(() => activateFeed(pet), 600000);
+    }
+  }
+
+  function activatePlay(pet) {
+    pet.canPlay = true;
+    return pet;
+  }
+
+  async function refreshPlay(pet) {
+    if (pet.canPlay == true) {
+      return;
+    }
+    else {
+      setTimeout(() => activateFeed(pet), 600000);
+    }
+  }
 
 class HomeScreen extends React.Component {
 
@@ -473,9 +503,8 @@ class PetInteraction extends React.Component {
     super(props);
     appPets = [];
     this.state = {
-      theList: '',
-      currentpet: '',
-
+      theList: [], // MAGGIE EDITED
+      currentpet: '', 
     }
   }
 
@@ -500,6 +529,41 @@ class PetInteraction extends React.Component {
     this.updateDataframe()
     
   }
+
+  updatePet = async(id, pet) => {  // MAGGIE
+    let petRef = this.invCollRef.doc(String(id)); // get ref for this specific pet
+    await petRef.update(pet);
+  }
+
+  feedPet = async(id, pet) => { // MAGGIE: the idea here is, users can only feed or play with a pet once for every 10 mins. Can be easily adjusted later.
+    if (pet.canFeed == true) {
+      pet.Stamina += 20;
+      pet.canFeed = false;
+      refreshFeed(pet);
+      this.updatePet(id, pet);
+      this.updateDataframe();
+      return pet; 
+    }
+    else {
+      return;
+    }
+  }
+
+  playPet = async(id, pet) => {
+    if (pet.canPlay == true) {
+      pet.Happiness += 20;
+      pet.canPlay = false;
+      refreshPlay(pet);
+      this.updatePet(id, pet);
+      this.updateDataframe();
+      return pet;
+    }
+    else {
+      return;
+    }
+  }
+
+
 
   render() {
     let petintpic;
@@ -537,13 +601,17 @@ class PetInteraction extends React.Component {
       <TouchableOpacity
         style={styles.petintbutton}
        
-        onPress={()=>{}}>
+        onPress={()=>{  // MAGGIE
+          this.feedPet(this.state.currentpet.key, this.state.currentpet)
+        }}>
         <Text>Feed</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.petintbutton}
        
-        onPress={()=>{}}>
+        onPress={()=>{
+          this.playPet(this.state.currentpet.key, this.state.currentpet)
+        }}>
         <Text>Play</Text>
       </TouchableOpacity>
       <TouchableOpacity
