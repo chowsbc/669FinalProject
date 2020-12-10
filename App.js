@@ -14,7 +14,7 @@ import '@firebase/firestore';
 import { firebaseConfig } from './Secrets.js';
 import fetch from 'node-fetch';
 import { CheckBox } from 'react-native-elements'
-import { Switch } from 'react-native-gesture-handler';
+import { Switch } from 'react-native-gesture-handler';    
 
 const Stack = createStackNavigator();
 const appName = "ListMaker 3000";
@@ -28,6 +28,7 @@ const invCollRef = db.collection('pets');
 let presentlist= '';
 let firstItem = '';
 let appPets = [];
+let feedbutton = '';
 
 //Adds pet to firebase using props from naming screeen
 async function addNewToFireBase(species, pic, name, key){ //uncessessary required variables removed
@@ -68,9 +69,18 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
     })
   }
 
+  async function updateState() {
+    await getPets()
+    return appPets
+  }
+
   function activateFeed(pet) { // MAGGIE: not sure if this works, needs testing
-    pet.canFeed = true;
-    return pet;
+    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, true, pet.canPlay)
+    feedbutton = true
+  }
+
+  function activatePlay(pet) { // MAGGIE: not sure if this works, needs testing
+    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, true)
   }
 
   async function refreshFeed(pet) {
@@ -78,13 +88,9 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
       return;
     }
     else {
-      setTimeout(() => activateFeed(pet), 600000);
+      setTimeout(() => feedbutton = activateFeed(pet), 10000);
+      console.log(feedbutton)
     }
-  }
-
-  function activatePlay(pet) {
-    pet.canPlay = true;
-    return pet;
   }
 
   async function refreshPlay(pet) {
@@ -92,9 +98,11 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
       return;
     }
     else {
-      setTimeout(() => activateFeed(pet), 600000);
+      setTimeout(() => activatePlay(pet), 10000);
     }
+    
   }
+
 
 class HomeScreen extends React.Component {
 
@@ -626,7 +634,9 @@ class PetInteraction extends React.Component {
     appPets = [];
     this.state = {
       theList: [], // MAGGIE EDITED
-      currentpet: '', 
+      currentpet: '',
+      feedbutton: true,
+      playbutton: true,
     }
   }
 
@@ -652,10 +662,14 @@ class PetInteraction extends React.Component {
   }
 
   feedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
-    if (pet.canFeed == true) {
+    if (pet.canFeed == true && pet.Stamina <= 100) {
       pet.Stamina += 20;
       pet.canFeed = false;
+      this.setState({feedbutton:false})
       refreshFeed(pet);
+      if (pet.Stamina > 100) {
+        pet.Stamina = 100
+      }
       UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
       this.updateDataframe();
       return pet; 
@@ -665,12 +679,25 @@ class PetInteraction extends React.Component {
     }
   }
 
+  NegfeedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
+    
+      pet.Stamina += (0 - 15);
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
+      this.updateDataframe();
+      return pet; 
+
+  }
+
   playPet = async(id, pet) => {
   
-    if (pet.canPlay == true) {
+    if (pet.canPlay == true && pet.Happiness <= 100) {
       pet.Happiness += 20;
       pet.canPlay = false;
-      refreshPlay(pet);
+      this.setState({playbutton:false})
+      x = await refreshPlay(pet);
+      if (pet.Happiness > 100) {
+        pet.Happiness = 100
+      }
       UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: See above
       this.updateDataframe();
       return pet;
@@ -680,11 +707,19 @@ class PetInteraction extends React.Component {
     }
   }
 
+  NegplayPet = async(id, pet) => {
+  
+   
+      pet.Happiness += (0 - 15);
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: See above
+      this.updateDataframe();
+      return pet;
+    
+  }
+
   async onDeletePet(key) { //STEPHEN
-    console.log(key)
     let inventoryRef = db.collection('pets');
     let itemDoc = inventoryRef.doc(String(key));
-    console.log('kek')
     await itemDoc.delete();
     this.updateDataframe();
   }
@@ -769,8 +804,8 @@ class PetInteraction extends React.Component {
         </Text>
     
       <TouchableOpacity
-        style={styles.petintbutton}
-       
+        disabled = {!this.state.feedbutton}
+        style={[(this.state.feedbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{  // MAGGIE
    
           this.feedPet(this.state.currentpet.key, this.state.currentpet)
@@ -778,22 +813,35 @@ class PetInteraction extends React.Component {
         <Text>Feed</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.petintbutton}
-       
+        disabled = {!this.state.playbutton}
+        style={[(this.state.playbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{
           this.playPet(this.state.currentpet.key, this.state.currentpet)
         }}>
+
         <Text>Play</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.petintbutton}
        
-        onPress={()=>{}}>
-        <Text>Decorate</Text>
+        onPress={()=>{  // MAGGIE
+   
+          this.NegfeedPet(this.state.currentpet.key, this.state.currentpet)
+        }}>
+        <Text>NegFeed</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.petintbutton}
-       
+        onPress={()=>{
+          this.NegplayPet(this.state.currentpet.key, this.state.currentpet)
+        }}>
+
+        <Text>NegPlay</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.petintbutton}       
         onPress={()=>{this.onDeletePet(this.state.currentpet.key); //STEPHEN
                       this.props.navigation.navigate("Home")}}>
         <Text>Release</Text>
@@ -803,7 +851,6 @@ class PetInteraction extends React.Component {
     );
   }
 }
-
 // App constructor and nav bar
 const Tab = createMaterialBottomTabNavigator();
 

@@ -65,6 +65,19 @@ export const styles = StyleSheet.create({
       
       },
 
+    petintbutton2: {
+      borderRadius: 12,
+      borderColor: colors.outline,
+      borderWidth: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 150,
+      height: 50,
+      marginHorizontal: '5%',
+      backgroundColor: 'lightgray',
+        
+      },
+
     interactbutton: {
       borderRadius: 12,
       borderColor: colors.outline,
@@ -91,7 +104,7 @@ export const styles = StyleSheet.create({
     padding: 40,
     marginHorizontal: '5%',
     backgroundColor: 'lightgray',
-          
+    
     },
 
     textInputContainer: {
