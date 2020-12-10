@@ -45,7 +45,6 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
   }
 
   async function UpdateToFireBase(species, pic, name, key, Stamina, Happiness, canFeed, canPlay){ //STEPHEN---update function has more required variables so that it can replace old pet documents without adding in pre-set values
-    console.log(Happiness)
     let itemRef = db.collection('pets').doc(String(key));
     itemRef.set ({
         species:species,
@@ -175,20 +174,56 @@ render() {
 
   }
 let petlistimage1;
-if (firstItem.species === 'Dog' && presentlist.includes(1)){
+if (firstItem.species === 'Dog' && presentlist.includes(1) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){ //STEPHEN
   petlistimage1 = 
   <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
   }
-
-if (firstItem.species === 'Cat'&& presentlist.includes(1)){
-petlistimage1 = 
-<Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+if (firstItem.species === 'Dog' && presentlist.includes(1) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sick_sad.png')}/>  
+  }
+if (firstItem.species === 'Dog' && presentlist.includes(1) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sick.png')}/>  
+}
+if (firstItem.species === 'Dog' && presentlist.includes(1) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sad.png')}/>  
 }
 
-if (firstItem.species === 'Bird' && presentlist.includes(1)){
+if (firstItem.species === 'Cat' && presentlist.includes(1) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+  }
+if (firstItem.species === 'Cat' && presentlist.includes(1) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sad_sick.png')}/>  
+  }
+if (firstItem.species === 'Cat' && presentlist.includes(1) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sick.png')}/>  
+}
+if (firstItem.species === 'Cat' && presentlist.includes(1) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sad.png')}/>  
+}
+
+if (firstItem.species === 'Bird' && presentlist.includes(1) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){
   petlistimage1 = 
   <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
   }
+if (firstItem.species === 'Bird' && presentlist.includes(1) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sick_sad.png')}/>  
+  }
+if (firstItem.species === 'Bird' && presentlist.includes(1) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sick.png')}/>  
+}
+if (firstItem.species === 'Bird' && presentlist.includes(1) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage1 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sad.png')}/>  
+}
 
 let petbutton1;
 if (presentlist.includes(1)) {
@@ -237,20 +272,56 @@ else{
 }
 
 let petlistimage2;
-if (firstItem.species === 'Dog' && presentlist.includes(2)){
+if (firstItem.species === 'Dog' && presentlist.includes(2) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){ //STEPHEN- if statements are used to decide which dog pic is shown, given Stamina and Hapiness
   petlistimage2 = 
   <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
   }
-
-if (firstItem.species === 'Cat'&& presentlist.includes(2)){
-petlistimage2 = 
-<Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+if (firstItem.species === 'Dog' && presentlist.includes(2) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sick_sad.png')}/>  
+  }
+if (firstItem.species === 'Dog' && presentlist.includes(2) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sick.png')}/>  
+}
+if (firstItem.species === 'Dog' && presentlist.includes(2) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sad.png')}/>  
 }
 
-if (firstItem.species === 'Bird' && presentlist.includes(2)){
+if (firstItem.species === 'Cat' && presentlist.includes(2) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+  }
+if (firstItem.species === 'Cat' && presentlist.includes(2) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sad_sick.png')}/>  
+  }
+if (firstItem.species === 'Cat' && presentlist.includes(2) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sick.png')}/>  
+}
+if (firstItem.species === 'Cat' && presentlist.includes(2) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sad.png')}/>  
+}
+
+if (firstItem.species === 'Bird' && presentlist.includes(2) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){
   petlistimage2 = 
   <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
   }
+if (firstItem.species === 'Bird' && presentlist.includes(2) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sick_sad.png')}/>  
+  }
+if (firstItem.species === 'Bird' && presentlist.includes(2) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sick.png')}/>  
+}
+if (firstItem.species === 'Bird' && presentlist.includes(2) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage2 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sad.png')}/>  
+}
 
 let petbutton2;
 if (presentlist.includes(2)) {
@@ -297,20 +368,56 @@ else {
 }
 
 let petlistimage3;
-if (firstItem.species === 'Dog' && presentlist.includes(3)){
+if (firstItem.species === 'Dog' && presentlist.includes(3) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){ //STEPHEN
   petlistimage3 = 
   <Image style={styles.petImageStyle1} source={require('./images/pixeldog3.png')}/>  
   }
-
-if (firstItem.species === 'Cat'&& presentlist.includes(3)){
-petlistimage3 = 
-<Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+if (firstItem.species === 'Dog' && presentlist.includes(3) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sick_sad.png')}/>  
+  }
+if (firstItem.species === 'Dog' && presentlist.includes(3) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sick.png')}/>  
+}
+if (firstItem.species === 'Dog' && presentlist.includes(3) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixeldog3_sad.png')}/>  
 }
 
-if (firstItem.species === 'Bird' && presentlist.includes(3)){
+if (firstItem.species === 'Cat' && presentlist.includes(3) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3.png')}/>  
+  }
+if (firstItem.species === 'Cat' && presentlist.includes(3) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sad_sick.png')}/>  
+  }
+if (firstItem.species === 'Cat' && presentlist.includes(3) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sick.png')}/>  
+}
+if (firstItem.species === 'Cat' && presentlist.includes(3) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelcat3_sad.png')}/>  
+}
+
+if (firstItem.species === 'Bird' && presentlist.includes(3) && firstItem.Stamina >= 50 && firstItem.Happiness >= 50){
   petlistimage3 = 
   <Image style={styles.petImageStyle1} source={require('./images/pixelbird3.png')}/>  
   }
+if (firstItem.species === 'Bird' && presentlist.includes(3) && firstItem.Stamina < 50 && firstItem.Happiness < 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sick_sad.png')}/>  
+  }
+if (firstItem.species === 'Bird' && presentlist.includes(3) && firstItem.Stamina < 50 && firstItem.Happiness >= 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sick.png')}/>  
+}
+if (firstItem.species === 'Bird' && presentlist.includes(3) && firstItem.Stamina >= 50 && firstItem.Happiness < 50){
+  petlistimage3 = 
+  <Image style={styles.petImageStyle1} source={require('./images/pixelbird3_sad.png')}/>  
+}
 
 let petbutton3;
 if (presentlist.includes(3)) {
@@ -544,9 +651,6 @@ class PetInteraction extends React.Component {
     
   }
 
-  //species, pic, name, key, Stamina, Happiness, canFeed, canPlay
-
-
   feedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
     if (pet.canFeed == true) {
       pet.Stamina += 20;
@@ -576,23 +680,77 @@ class PetInteraction extends React.Component {
     }
   }
 
+  async onDeletePet(key) { //STEPHEN
+    console.log(key)
+    let inventoryRef = db.collection('pets');
+    let itemDoc = inventoryRef.doc(String(key));
+    console.log('kek')
+    await itemDoc.delete();
+    this.updateDataframe();
+  }
+
 
 
   render() {
     let petintpic;
-    if (this.state.currentpet.species === 'Dog'){
+    if (this.state.currentpet.species === 'Dog' && this.state.currentpet.Stamina >= 50 && this.state.currentpet.Happiness >= 50){ //STEPHEN
       petintpic = 
       <Image style={styles.petImageStyle2} source={require('./images/pixeldog3.png')}/>  
       }
+
+    if (this.state.currentpet.species === 'Dog' && this.state.currentpet.Stamina < 50 && this.state.currentpet.Happiness < 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixeldog3_sick_sad.png')}/>  
+      }
     
-    if (this.state.currentpet.species === 'Cat'){
+    if (this.state.currentpet.species === 'Dog' && this.state.currentpet.Stamina < 50 && this.state.currentpet.Happiness >= 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixeldog3_sick.png')}/>  
+      }
+  
+    if (this.state.currentpet.species === 'Dog' && this.state.currentpet.Stamina >= 50 && this.state.currentpet.Happiness < 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixeldog3_sad.png')}/>  
+      }
+    
+    if (this.state.currentpet.species === 'Cat' && this.state.currentpet.Stamina >= 50 && this.state.currentpet.Happiness >= 50){
       petintpic = 
       <Image style={styles.petImageStyle2} source={require('./images/pixelcat3.png')}/>  
       }
+
+    if (this.state.currentpet.species === 'Cat' && this.state.currentpet.Stamina < 50 && this.state.currentpet.Happiness < 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelcat3_sad_sick.png')}/>  
+      }
     
-    if (this.state.currentpet.species === 'Bird'){
+    if (this.state.currentpet.species === 'Cat' && this.state.currentpet.Stamina < 50 && this.state.currentpet.Happiness >= 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelcat3_sick.png')}/>  
+      }
+  
+    if (this.state.currentpet.species === 'Cat' && this.state.currentpet.Stamina >= 50 && this.state.currentpet.Happiness < 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelcat3_sad.png')}/>  
+      }
+    
+    if (this.state.currentpet.species === 'Bird' && this.state.currentpet.Stamina >= 50 && this.state.currentpet.Happiness >= 50){
       petintpic = 
       <Image style={styles.petImageStyle2} source={require('./images/pixelbird3.png')}/>  
+      }
+  
+    if (this.state.currentpet.species === 'Bird' && this.state.currentpet.Stamina < 50 && this.state.currentpet.Happiness < 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelbird3_sick_sad.png')}/>  
+      }
+      
+    if (this.state.currentpet.species === 'Bird' && this.state.currentpet.Stamina < 50 && this.state.currentpet.Happiness >= 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelbird3_sick.png')}/>  
+      }
+    
+    if (this.state.currentpet.species === 'Bird' && this.state.currentpet.Stamina >= 50 && this.state.currentpet.Happiness < 50){
+      petintpic = 
+      <Image style={styles.petImageStyle2} source={require('./images/pixelbird3_sad.png')}/>  
       }
 
     return (
@@ -636,7 +794,8 @@ class PetInteraction extends React.Component {
       <TouchableOpacity
         style={styles.petintbutton}
        
-        onPress={()=>{}}>
+        onPress={()=>{this.onDeletePet(this.state.currentpet.key); //STEPHEN
+                      this.props.navigation.navigate("Home")}}>
         <Text>Release</Text>
       </TouchableOpacity>
       </View>
