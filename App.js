@@ -42,10 +42,11 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
         Happiness: 40, // MAGGIE E: for testing!
         canFeed: true,  // MAGGIE
         canPlay: true,
+        dateAdded: new Date (),
     });
   }
 
-  async function UpdateToFireBase(species, pic, name, key, Stamina, Happiness, canFeed, canPlay){ //STEPHEN---update function has more required variables so that it can replace old pet documents without adding in pre-set values
+  async function UpdateToFireBase(species, pic, name, key, Stamina, Happiness, canFeed, canPlay, dateAdded){ //STEPHEN---update function has more required variables so that it can replace old pet documents without adding in pre-set values
     let newPet = {  // MAGGIE E
       species:species,
       pic:pic,
@@ -55,6 +56,7 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
       Happiness:Happiness,
       canFeed: canFeed,
       canPlay: canPlay,
+      dateAdded: dateAdded,
   }
     let itemRef = db.collection('pets').doc(String(key));
     await itemRef.update(newPet);  
@@ -664,15 +666,61 @@ class PetInteraction extends React.Component {
   }
 
    async updateDataframe() {
-     await getPets();
-     this.setState({theList:appPets});
-     this.setState({list_wascreated:true});
-     this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
+    await getPets();
+    this.setState({theList:appPets});
+    this.setState({list_wascreated:true});
+    this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
+   
+    await this.updateTimer(this.state.currentpet.key, this.state.currentpet, this.state.currentpet.dateAdded, this.state.currentpet.Stamina, this.state.currentpet.Happiness); //ALISON - updateTimer() gets called when the pet page laods after the user clicks the Interact button
+    await getPets();  //need to call getPets again to get changes made in updateTimer
+    this.setState({theList:appPets}); 
+    this.setState({list_wascreated:true});
+    this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
    }
 
   onFocus = () => {
     this.updateDataframe();
     
+  }
+
+  updateTimer = async(id, pet, dateAdded, stamina, happiness) => {
+    
+
+    let latestDate = new Date();
+      
+
+    let dateDifference = (latestDate - dateAdded.toDate());
+        // console.log("Date difference is:  ", dateDifference);  //time returned is in milliseconds
+      
+
+    //milliseconds per hour 3,600,000
+    //milliseconds per day 86,400,000
+    //milliseconds per minute 60,000
+
+    let multiplier = 0
+    let pointsToRemove = 10;
+
+    if(dateDifference > 86400000 && stamina !=0 && happiness !=0 ){  //for testing: swap 86400000 for 60000 to test in minutes
+
+    multiplier = Math.floor(dateDifference/86400000); //for testing: swap 86400000 for 60000 to test in minutes
+         //console.log("multiplyer is : ", multiplier);
+      
+    multipliedPointsToRemove = pointsToRemove * multiplier  //mulitply number of days by number of points to remove per dat
+    
+      stamina -= multipliedPointsToRemove;
+      happiness -= multipliedPointsToRemove;
+
+    }
+    else if( stamina <= 0 || happiness <=0){
+      this.onDeletePet(id);
+    }
+
+   pet.dateAdded = latestDate;  //ALISON - update dateAdded every time the user interacts with their pet - updateTimer() gets called when the pet page laods after the user clicks the Interact button
+   pet.stamina = stamina;
+   pet.happiness = happiness;
+
+   UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.stamina, pet.happiness, pet.canFeed, pet.canPlay, pet.dateAdded)
+
   }
 
   feedPet = async(pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
