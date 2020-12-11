@@ -64,23 +64,25 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
     appPets = [];
     let qSnap = await invCollRef.get();
     qSnap.forEach(qDocSnap => {
-    let data = qDocSnap.data();
-    appPets.push(data);
-    })
+      let key = qDocSnap.id;  // MAGGIE E
+      let data = qDocSnap.data();
+      data.key = key;  // MAGGIE E
+      appPets.push(data);
+    });
   }
 
   async function updateState() {
-    await getPets()
-    return appPets
+    await getPets();
+    return appPets;
   }
 
   function activateFeed(pet) { // MAGGIE: not sure if this works, needs testing
-    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, true, pet.canPlay)
-    feedbutton = true
+    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, true, pet.canPlay);
+    feedbutton = true;
   }
 
   function activatePlay(pet) { // MAGGIE: not sure if this works, needs testing
-    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, true)
+    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, true);
   }
 
   async function refreshFeed(pet) {
@@ -89,7 +91,7 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
     }
     else {
       setTimeout(() => feedbutton = activateFeed(pet), 10000);
-      console.log(feedbutton)
+      console.log(feedbutton);
     }
   }
 
@@ -119,26 +121,26 @@ class HomeScreen extends React.Component {
 
       //Trigger load function, update dataframe
       async updateDataframe() {
-        await getPets()
+        await getPets();
         this.setState({theList:appPets});
         this.setState({list_wascreated:true});
       }
 
       //creates a list of keys that corrospond to existing firebase items. List will have a zero at the end. This is needed for conditional rendering
       createlist() {
-        presentlist = []
+        presentlist = [];
         for (item of this.state.theList) {
-          presentlist.push(item.key)
+          presentlist.push(item.key);
           }
-        presentlist.push(0)
-        return presentlist 
+        presentlist.push(0);
+        return presentlist;
       }
       
 
       async componentDidMount() {
         this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
-        this.updateDataframe()
-        this.createlist()
+        this.updateDataframe();
+        this.createlist();
         }
     
         componentWillUnmount() {
@@ -146,7 +148,7 @@ class HomeScreen extends React.Component {
       }
 
       onFocus = () => {
-        this.updateDataframe()
+        this.updateDataframe();
       }
 
 //redner function gets a list keys of present firebase items (1, 2, or 3). Then, three petlist_items (petlist_item 1, 2, and 3) are conditionally rendered
@@ -156,13 +158,13 @@ class HomeScreen extends React.Component {
 //Buttons are conditionally rendered when a pet item is absent. Pressing a button, pass a "place" to the PetMaker class.
 //<<Petname>> and <<species>>.jpg rednered when a pet item is rednered when there is a corrosponding pet item in firebase
 render() {
-  presentlist = []
-  presentlist = this.createlist()
+  presentlist = [];
+  presentlist = this.createlist();
   let introtext; 
   if (this.state.list_wascreated === true) {
   if (presentlist.includes(1)) {
     firstItem = this.state.theList.find((element) => {return element.key === 1 })
-  introtext=
+    introtext=
   <View>
   <Text>{firstItem.name}</Text>
   </View>
@@ -249,8 +251,8 @@ if (presentlist.includes(1)) {
 
 
 let introtext2;
-presentlist = []
-presentlist = this.createlist()
+presentlist = [];
+presentlist = this.createlist();
 for (item of this.state.theList) {
   presentlist.push(item.key)
 }
@@ -473,26 +475,26 @@ class PetMaker extends React.Component {
         super(props);
         appPets = [];
         this.operation = this.props.route.params.operation;
-        this.place = ''
-        this.animal = ''
-        this.picture = ''
+        this.place = '';
+        this.animal = '';
+        this.picture = '';
       }
 
       async updateDataframe() {
-        await getPets()
+        await getPets();
         this.setState({theList:appPets});
-        theList = this.state.theList
+        theList = this.state.theList;
 
         }
 
       async componentDidMount() {
         this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
-        this.pressed = false
+        this.pressed = false;
         }
 
       //recieves "place" from Homescreen
       onFocus = () => {
-        this.place = this.props.route.params.Place
+        this.place = this.props.route.params.Place;
       }
 
   //buttons pass the Animal(species), the Picture, the pet's place in the list, to the PetNamer class.
@@ -570,9 +572,9 @@ class PetNamer extends React.Component {
     
     //recieves place, animal, and picture from PetMaker
     onFocus = () => {
-      this.place = this.props.route.params.Place
-      this.animal = this.props.route.params.Animal
-      this.picture = this.props.route.params.Picture
+      this.place = this.props.route.params.Place;
+      this.animal = this.props.route.params.Animal;
+      this.picture = this.props.route.params.Picture;
     }
 
 //render function renders a textbox. Button press creates a pet item in firebase with using inputtext from the text box as well as picture, place, and animal
@@ -642,7 +644,7 @@ class PetInteraction extends React.Component {
 
   async componentDidMount() {
     this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
-    this.updateDataframe()
+    this.updateDataframe();
     }
 
     componentWillUnmount() {
@@ -650,14 +652,14 @@ class PetInteraction extends React.Component {
   }
 
    async updateDataframe() {
-     await getPets()
+     await getPets();
      this.setState({theList:appPets});
      this.setState({list_wascreated:true});
      this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
    }
 
   onFocus = () => {
-    this.updateDataframe()
+    this.updateDataframe();
     
   }
 
@@ -670,7 +672,7 @@ class PetInteraction extends React.Component {
       if (pet.Stamina > 100) {
         pet.Stamina = 100
       }
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
       this.updateDataframe();
       return pet; 
     }
@@ -682,7 +684,7 @@ class PetInteraction extends React.Component {
   NegfeedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
     
       pet.Stamina += (0 - 15);
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
       this.updateDataframe();
       return pet; 
 
@@ -698,7 +700,7 @@ class PetInteraction extends React.Component {
       if (pet.Happiness > 100) {
         pet.Happiness = 100
       }
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: See above
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
       this.updateDataframe();
       return pet;
     }
@@ -711,7 +713,7 @@ class PetInteraction extends React.Component {
   
    
       pet.Happiness += (0 - 15);
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay) //STEPHEN: See above
+      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
       this.updateDataframe();
       return pet;
     
