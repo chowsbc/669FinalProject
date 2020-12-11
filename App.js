@@ -32,31 +32,43 @@ let feedbutton = '';
 
 //Adds pet to firebase using props from naming screeen
 async function addNewToFireBase(species, pic, name, key){ //uncessessary required variables removed
-    let itemRef = db.collection('pets').doc(String(key));
+    let itemRef = db.collection('pets').doc(String(key));  
     itemRef.set ({
         species:species,
         pic:pic,
         name:name,
         key:key,
-        Stamina: 100,
-        Happiness: 100,
+        Stamina: 80,
+        Happiness: 40, // MAGGIE E: for testing!
         canFeed: true,  // MAGGIE
         canPlay: true,
     });
   }
 
   async function UpdateToFireBase(species, pic, name, key, Stamina, Happiness, canFeed, canPlay){ //STEPHEN---update function has more required variables so that it can replace old pet documents without adding in pre-set values
+    let newPet = {  // MAGGIE E
+      species:species,
+      pic:pic,
+      name:name,
+      key:key,
+      Stamina:Stamina,
+      Happiness:Happiness,
+      canFeed: canFeed,
+      canPlay: canPlay,
+  }
     let itemRef = db.collection('pets').doc(String(key));
-    itemRef.set ({
-        species:species,
-        pic:pic,
-        name:name,
-        key:key,
-        Stamina:Stamina,
-        Happiness:Happiness,
-        canFeed: canFeed,
-        canPlay: canPlay,
-    });
+    await itemRef.update(newPet);  
+    let petIndex = -1;
+    for (let i in appPets) {
+      if (appPets[i].key === key) {
+        petIndex = i;
+        break;
+      }
+    }
+    if (petIndex !== -1) {
+      newPet.key = key;
+      appPets[petIndex] = newPet;
+    }
   }
 
   //Load function
@@ -64,16 +76,16 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
     appPets = [];
     let qSnap = await invCollRef.get();
     qSnap.forEach(qDocSnap => {
-      let key = qDocSnap.id;  // MAGGIE E
+      // let key = qDocSnap.id;  // MAGGIE E
       let data = qDocSnap.data();
-      data.key = key;  // MAGGIE E
+      // data.key = key;  // MAGGIE E
       appPets.push(data);
     });
   }
 
   async function updateState() {
     await getPets();
-    return appPets;
+    return appPets;  // MAGGIE: what's this function for?
   }
 
   function activateFeed(pet) { // MAGGIE: not sure if this works, needs testing
@@ -347,8 +359,8 @@ if (presentlist.includes(2)) {
 
 
 let introtext3;
-presentlist = []    
-presentlist = this.createlist()
+presentlist = [];    
+presentlist = this.createlist();
 for (item of this.state.theList) {
   presentlist.push(item.key)
 }
@@ -663,7 +675,7 @@ class PetInteraction extends React.Component {
     
   }
 
-  feedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
+  feedPet = async(pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
     if (pet.canFeed == true && pet.Stamina <= 100) {
       pet.Stamina += 20;
       pet.canFeed = false;
@@ -671,9 +683,12 @@ class PetInteraction extends React.Component {
       refreshFeed(pet);
       if (pet.Stamina > 100) {
         pet.Stamina = 100
-      }
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
-      this.updateDataframe();
+      } // MAGGIE E
+      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
+      this.updateDataframe(); // MAGGIE E
+      this.setState({
+        currentpet: pet,
+      });
       return pet; 
     }
     else {
@@ -684,13 +699,13 @@ class PetInteraction extends React.Component {
   NegfeedPet = async(id, pet) => { // STEPHEN: Recomend reducing this for testing purposes. Didn't get to this yet.
     
       pet.Stamina += (0 - 15);
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
+      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
       this.updateDataframe();
       return pet; 
 
   }
 
-  playPet = async(id, pet) => {
+  playPet = async(pet) => {
   
     if (pet.canPlay == true && pet.Happiness <= 100) {
       pet.Happiness += 20;
@@ -700,8 +715,11 @@ class PetInteraction extends React.Component {
       if (pet.Happiness > 100) {
         pet.Happiness = 100
       }
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
-      this.updateDataframe();
+      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
+      this.updateDataframe(); // MAGGIE E: added awaits
+      this.setState({
+        currentpet: pet,
+      });
       return pet;
     }
     else {
@@ -713,7 +731,7 @@ class PetInteraction extends React.Component {
   
    
       pet.Happiness += (0 - 15);
-      UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
+      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
       this.updateDataframe();
       return pet;
     
@@ -810,7 +828,7 @@ class PetInteraction extends React.Component {
         style={[(this.state.feedbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{  // MAGGIE
    
-          this.feedPet(this.state.currentpet.key, this.state.currentpet)
+          this.feedPet(this.state.currentpet) // MAGGIE E
         }}>
         <Text>Feed</Text>
       </TouchableOpacity>
@@ -818,7 +836,7 @@ class PetInteraction extends React.Component {
         disabled = {!this.state.playbutton}
         style={[(this.state.playbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{
-          this.playPet(this.state.currentpet.key, this.state.currentpet)
+          this.playPet(this.state.currentpet) // MAGGIE E
         }}>
 
         <Text>Play</Text>
