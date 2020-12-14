@@ -91,12 +91,12 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
   }
 
   function activateFeed(pet) { // MAGGIE: not sure if this works, needs testing
-    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, true, pet.canPlay);
+    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, true, pet.canPlay, pet.dateAdded);
     feedbutton = true;
   }
 
   function activatePlay(pet) { // MAGGIE: not sure if this works, needs testing
-    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, true);
+    UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, true, pet.dateAdded);
   }
 
   async function refreshFeed(pet) {
@@ -105,7 +105,7 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
     }
     else {
       setTimeout(() => feedbutton = activateFeed(pet), 10000);
-      console.log(feedbutton);
+
     }
   }
 
@@ -653,6 +653,8 @@ class PetInteraction extends React.Component {
       currentpet: '',
       feedbutton: true,
       playbutton: true,
+      timeOfPlayPress: 'reee',
+      y: '',
     }
   }
 
@@ -670,12 +672,12 @@ class PetInteraction extends React.Component {
     this.setState({theList:appPets});
     this.setState({list_wascreated:true});
     this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
-   
     await this.updateTimer(this.state.currentpet.key, this.state.currentpet, this.state.currentpet.dateAdded, this.state.currentpet.Stamina, this.state.currentpet.Happiness); //ALISON - updateTimer() gets called when the pet page laods after the user clicks the Interact button
     await getPets();  //need to call getPets again to get changes made in updateTimer
     this.setState({theList:appPets}); 
     this.setState({list_wascreated:true});
     this.state.currentpet = this.state.theList[(this.props.route.params.Place) - 1];
+    
    }
 
   onFocus = () => {
@@ -732,7 +734,7 @@ class PetInteraction extends React.Component {
       if (pet.Stamina > 100) {
         pet.Stamina = 100
       } // MAGGIE E
-      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
+      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay, pet.dateAdded); //STEPHEN: This seems to be a simpler way to update the pet in firebase. Adding the a doc with the same id replaces the old doc.
       this.updateDataframe(); // MAGGIE E
       this.setState({
         currentpet: pet,
@@ -754,7 +756,7 @@ class PetInteraction extends React.Component {
   }
 
   playPet = async(pet) => {
-  
+
     if (pet.canPlay == true && pet.Happiness <= 100) {
       pet.Happiness += 20;
       pet.canPlay = false;
@@ -763,7 +765,7 @@ class PetInteraction extends React.Component {
       if (pet.Happiness > 100) {
         pet.Happiness = 100
       }
-      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay); //STEPHEN: See above
+      await UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, pet.canFeed, pet.canPlay, pet.dateAdded); //STEPHEN: See above
       this.updateDataframe(); // MAGGIE E: added awaits
       this.setState({
         currentpet: pet,
@@ -875,16 +877,19 @@ class PetInteraction extends React.Component {
         disabled = {!this.state.feedbutton}
         style={[(this.state.feedbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{  // MAGGIE
-   
+          console.log('reee1')
           this.feedPet(this.state.currentpet) // MAGGIE E
         }}>
         <Text>Feed</Text>
       </TouchableOpacity>
       <TouchableOpacity
+
+
         disabled = {!this.state.playbutton}
         style={[(this.state.playbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{
-          this.playPet(this.state.currentpet) // MAGGIE E
+          this.playPet(this.state.currentpet); // MAGGIE E
+  
         }}>
 
         <Text>Play</Text>
