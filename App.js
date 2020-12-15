@@ -32,7 +32,7 @@ let feedbutton = '';
 
 //Adds pet to firebase using props from naming screeen
 async function addNewToFireBase(species, pic, name, key){ //uncessessary required variables removed
-    let itemRef = db.collection('pets').doc(String(key));  
+  let itemRef = db.collection('pets').doc(String(key));  
     itemRef.set ({
         species:species,
         pic:pic,
@@ -75,6 +75,7 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
 
   //Load function
   async function getPets() { // MAGGIE
+    console.log('brrr')
     appPets = [];
     let qSnap = await invCollRef.get();
     qSnap.forEach(qDocSnap => {
@@ -85,10 +86,6 @@ async function addNewToFireBase(species, pic, name, key){ //uncessessary require
     });
   }
 
-  async function updateState() {
-    await getPets();
-    return appPets;  // MAGGIE: what's this function for?
-  }
 
   function activateFeed(pet) { // MAGGIE: not sure if this works, needs testing
     UpdateToFireBase(pet.species, pet.pic, pet.name, pet.key, pet.Stamina,pet.Happiness, true, pet.canPlay, pet.dateAdded);
@@ -128,6 +125,7 @@ class HomeScreen extends React.Component {
         super(props);
         this.nextKey = 0;
         this.place = '';
+        appPets = [];
         this.state = {
           theList: '',
           pet1: '',
@@ -144,22 +142,38 @@ class HomeScreen extends React.Component {
         this.setState({theList:appPets});
         this.setState({list_wascreated:true});
 
+        if (this.state.theList[0]) {
         this.state.pet1 = this.state.theList[0];
+        }
+        if (this.state.theList[1]) {
         this.state.pet2 = this.state.theList[1];
+        }
+        if (this.state.theList[2]) {
         this.state.pet3 = this.state.theList[2];
+        }
 
         /*for(let i=0; i < 3; i++){
          this.state.pet = this.state.theList[i];
          console.log("curentpet = ", this.state.pet);
       }*/
-
+     // console.log('brrr')
+          if (this.state.theList[0]) {
           await this.updateTimer(this.state.pet1.key, this.state.pet1, this.state.pet1.dateAdded, this.state.pet1.Stamina, this.state.pet1.Happiness);
+          }
+          if (this.state.theList[1]) {
          await this.updateTimer(this.state.pet2.key, this.state.pet2, this.state.pet2.dateAdded, this.state.pet2.Stamina, this.state.pet2.Happiness);
+          }
+          if (this.state.theList[2]) {
           await this.updateTimer(this.state.pet3.key, this.state.pet3, this.state.pet3.dateAdded, this.state.pet3.Stamina, this.state.pet3.Happiness);
-
+          }
+       //   console.log('swaswa')
           await getPets();
           this.setState({theList:appPets});
+          console.log(this.state.theList)
           this.setState({list_wascreated:true})
+
+        
+      
 
           
 
@@ -252,6 +266,11 @@ class HomeScreen extends React.Component {
         this.focusUnsubscribe = this.props.navigation.addListener('focus', this.onFocus);
         this.updateDataframe();
         this.createlist();
+        // setInterval(() => {
+        // this.updateDataframe()
+        // }, 1000);
+
+
         }
     
         componentWillUnmount() {
@@ -259,8 +278,7 @@ class HomeScreen extends React.Component {
       }
 
       onFocus = () => {
-        this.updateDataframe();
-       
+        this.updateDataframe()
       }
 
 //redner function gets a list keys of present firebase items (1, 2, or 3). Then, three petlist_items (petlist_item 1, 2, and 3) are conditionally rendered
@@ -935,7 +953,6 @@ class PetInteraction extends React.Component {
         disabled = {!this.state.feedbutton}
         style={[(this.state.feedbutton) ? styles.petintbutton:styles.petintbutton2]}
         onPress={()=>{  // MAGGIE
-          console.log('reee1')
           this.feedPet(this.state.currentpet) // MAGGIE E
         }}>
         <Text>Feed</Text>
